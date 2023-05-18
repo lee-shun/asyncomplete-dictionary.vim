@@ -1,12 +1,13 @@
 let s:DEFAULT_CACHE_LEVEL = 1
+let s:opt = {}
 
 function! asyncomplete#sources#dictionary#get_source_options(opt) " {{{
-  return a:opt
+let s:opt = a:opt
+return a:opt
 endfunction " }}}
 
 function! asyncomplete#sources#dictionary#completor(opt, ctx) abort " {{{
-  let l:max_item = a:opt['max_item']
-  let candidates = s:gather_candidates()[0:l:max_item-1]
+  let candidates = s:gather_candidates()
   let startcol = a:ctx.col - len(matchstr(a:ctx.typed, '\w\+$'))
   call asyncomplete#complete(a:opt.name, a:ctx, startcol, candidates)
 endfunction " }}}
@@ -48,10 +49,11 @@ else
 endif " }}}
 
 function! s:words2candidates(words) abort " {{{
+  let l:max_item = s:opt['max_item']
   if get(g:, 'asyncomplete_dictionary_sort_required', 1)
     call uniq(sort(a:words))
   endif
-  return map(a:words, '{"word": v:val, "dup": 1, "icase": 1, "menu": "[dict]"}')
+  return map(a:words[0:l:max_item-1], '{"word": v:val, "dup": 1, "icase": 1, "menu": "[dict]"}')
 endfunction " }}}
 
 function! s:read_dictionary(filepath) abort " {{{
