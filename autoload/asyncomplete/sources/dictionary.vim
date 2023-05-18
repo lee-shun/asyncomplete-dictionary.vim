@@ -5,7 +5,8 @@ function! asyncomplete#sources#dictionary#get_source_options(opt) " {{{
 endfunction " }}}
 
 function! asyncomplete#sources#dictionary#completor(opt, ctx) abort " {{{
-  let candidates = s:gather_candidates()
+  let l:max_item = a:opt['max_item']
+  let candidates = s:gather_candidates()[0:l:max_item-1]
   let startcol = a:ctx.col - len(matchstr(a:ctx.typed, '\w\+$'))
   call asyncomplete#complete(a:opt.name, a:ctx, startcol, candidates)
 endfunction " }}}
